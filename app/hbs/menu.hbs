@@ -1,5 +1,7 @@
 <div class="menu">
-    {{#each item in items}}
-        {{> menu-item item}}
-    {{/each}}
+    <table>
+        {{#each}}
+            <tr><td>{{name}}</td><td>{{cost}}</td></tr>
+        {{/each}}
+    </table>
 </div>

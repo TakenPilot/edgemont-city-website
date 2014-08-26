@@ -9,7 +9,6 @@ var browserify = require('browserify');
 var handlebars = require('gulp-handlebars');
 var notify = require('gulp-notify');
 var jsHint = require('gulp-jshint');
-var liveReload = require('gulp-livereload');
 var config = require('./app/config.json');
 var wrap = require('gulp-wrap');
 var declare = require('gulp-declare');
@@ -20,6 +19,7 @@ var nib = require('nib');
 var sitemap = require('gulp-sitemap');
 var manifest = require('gulp-manifest');
 var _ = require('lodash');
+var webserver = require('gulp-webserver');
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -64,7 +64,9 @@ function getConfig() {
  */
 gulp.task('hbs', function() {
     return gulp.src(path.src.hbs)
-        .pipe(handlebars())
+        .pipe(handlebars({
+            handlebars: require('handlebars')
+        }))
         .pipe(wrap('Handlebars.template(<%= contents %>)'))
         .pipe(declare({
             namespace: 'Templates',
@@ -72,27 +74,24 @@ gulp.task('hbs', function() {
         }))
         .pipe(concat('templates.js'))
         .pipe(gulp.dest(path.dest.js))
-        .pipe(notify({ message: 'Handlebars complete', onLast: true }))
-        .pipe(liveReload({ auto: false }));
+        .pipe(notify({ message: 'Handlebars complete', onLast: true }));
 });
 
 /**
  * Compile javascript
  */
-gulp.task('js', function() {
+gulp.task('js', ['hbs'], function() {
     return browserify(path.src.jsRoot).bundle()
         .pipe(source('app.js'))
         .pipe(gulp.dest(path.dest.js))
-        .pipe(notify({ message: 'JavaScript complete', onLast: true }))
-        .pipe(liveReload({ auto: false }));
+        .pipe(notify({ message: 'JavaScript complete', onLast: true }));
 });
 
 gulp.task('css', function () {
    gulp.src(path.src.styl)
        .pipe(stylus({use: [nib()]}))
        .pipe(gulp.dest(path.dest.css))
-       .pipe(notify({ message: 'CSS complete' }))
-       .pipe(liveReload({ auto: false }));
+       .pipe(notify({ message: 'CSS complete' }));
 });
 
 
@@ -123,8 +122,7 @@ gulp.task('html', function() {
         .pipe(data(getConfig))
         .pipe(jade())
         .pipe(gulp.dest(path.dest.dir))
-        .pipe(notify({ message: 'Html complete', onLast: true }))
-        .pipe(liveReload({ auto: false }));
+        .pipe(notify({ message: 'Html complete', onLast: true }));
 });
 
 /**
@@ -142,8 +140,7 @@ gulp.task('img', function() {
         }))
         .pipe(webP())
         .pipe(gulp.dest(path.dest.img))
-        .pipe(notify({ message: 'Image optimization complete', onLast: true }))
-        .pipe(liveReload({ auto: false }));
+        .pipe(notify({ message: 'Image optimization complete', onLast: true }));
 });
 
 gulp.task('clean', function (done) {
@@ -153,25 +150,23 @@ gulp.task('clean', function (done) {
 /**
  * Watch all app files and only run the process they need for output
  */
-gulp.task('watch', function () {
-    liveReload.listen();
+gulp.task('watch', ['build'], function () {
     gulp.watch([path.src.jade], ['html']);
     gulp.watch([path.src.styl], ['css']);
     gulp.watch([path.src.hbs], ['hbs']);
     gulp.watch([path.src.js], ['js'])
 });
 
-gulp.task('serve', ['build'], function (next) {
-    var connect = require('connect'),
-        server = connect(),
-        port = process.env.PORT || 8080;
-    server.use(connect
-        .static(path.dest.dir))
-        .listen(process.env.PORT || 8080, function () {
-            console.log('listening on', port);
-            next.apply(null, arguments);
-        });
+gulp.task('serve', ['watch'], function () {
+    gulp.src('dist')
+        .pipe(webserver({
+            root: 'dist',
+            directoryListing: false,
+            livereload: true,
+            port: 8000
+        }));
 });
 
-gulp.task('build', ['hbs', 'css', 'js', 'img', 'html', 'sitemap', 'manifest']);
+gulp.task('build', ['hbs', 'css', 'js', 'img', 'html', 'sitemap']);
+gulp.task('prod', ['clean', 'build', 'manifest']);
 gulp.task('default', ['clean', 'build', 'watch', 'serve']);

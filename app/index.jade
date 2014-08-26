@@ -2,6 +2,9 @@ doctype html
 html(lang="en", manifest="app.manifest")
     head
         title #{pageTitle}
-        script(type='text/javascript')
+        script(type="text/javascript", src="js/app.js")
+        script(type="text/javascript", src="js/templates.js")
+        link(rel='stylesheet', href='css/style-guide.css')
      body
          h1 #{pageTitle}
+         #menu
