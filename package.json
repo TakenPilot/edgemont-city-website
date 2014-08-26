@@ -19,6 +19,7 @@
     "gulp-concat": "^2.3.4",
     "gulp-data": "^1.0.2",
     "gulp-declare": "^0.3.0",
+    "gulp-gm": "0.0.7",
     "gulp-handlebars": "^2.2.0",
     "gulp-htmlmin": "^0.2.0",
     "gulp-if": "^1.2.4",

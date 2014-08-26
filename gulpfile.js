@@ -20,6 +20,7 @@ var sitemap = require('gulp-sitemap');
 var manifest = require('gulp-manifest');
 var _ = require('lodash');
 var webserver = require('gulp-webserver');
+var gm = require('gulp-gm');
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -39,7 +40,7 @@ var layout = {
         jsRoot: 'js/app.js',
         styl: 'css/**/*.styl',
         jade: '**/*.jade',
-        img: 'img/*.[jpg|png|svg]'
+        img: 'img/*'
     }
 };
 
@@ -55,9 +56,7 @@ var path = {
 
 console.log(path);
 
-function getConfig() {
-    return config;
-}
+function getConfig() { return config; }
 
 /**
  * Compile templates for dynamic data
@@ -133,6 +132,7 @@ gulp.task('html', function() {
  */
 gulp.task('img', function() {
     return gulp.src(path.src.img)
+        //.pipe(gm(function (file) { return file.resize(600); }, { imageMagick: true }))
         .pipe(imageMin({
             progressive: true,
             svgoPlugins: [{removeViewBox: false}],
