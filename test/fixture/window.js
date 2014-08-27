@@ -1,0 +1,1 @@
+window = require("jsdom").jsdom().parentWindow; //make global for those who expect it

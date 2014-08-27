@@ -8,12 +8,12 @@ var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var handlebars = require('gulp-handlebars');
 var notify = require('gulp-notify');
-var jsHint = require('gulp-jshint');
+var jshint = require('gulp-jshint');
 var config = require('./app/config.json');
 var wrap = require('gulp-wrap');
 var declare = require('gulp-declare');
 var concat = require('gulp-concat');
-var rimraf = require('gulp-rimraf');
+var rimraf = require('rimraf');
 var stylus = require('gulp-stylus');
 var nib = require('nib');
 var sitemap = require('gulp-sitemap');
@@ -21,6 +21,10 @@ var manifest = require('gulp-manifest');
 var _ = require('lodash');
 var webserver = require('gulp-webserver');
 var gm = require('gulp-gm');
+var complexity = require('gulp-complexity');
+var stylish = require('jshint-stylish');
+var karma = require('karma').server;
+var mocha = require('gulp-mocha');
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -52,9 +56,8 @@ var path = {
     src: _.mapValues(layout.src, function (str) {
         return src + str;
     })
-}
+};
 
-console.log(path);
 
 function getConfig() { return config; }
 
@@ -76,6 +79,44 @@ gulp.task('hbs', function() {
         .pipe(notify({ message: 'Handlebars complete', onLast: true }));
 });
 
+gulp.task('lint', function () {
+    return gulp.src(path.src.js)
+        .pipe(jshint({
+            "globals": {
+                "Promise"   : true
+            }
+        }))
+        .pipe(jshint.reporter(stylish));
+
+});
+
+gulp.task('complexity', function () {
+    return gulp.src(path.src.js)
+        .pipe(complexity({
+            jsLintXML: 'report.xml',
+            checkstyleXML: 'checkstyle.xml',
+            hideComplexFunctions: false,
+            errorsOnly: false,
+            cyclomatic: [4],
+            halstead: [7],
+            maintainability: 110
+        }));
+});
+
+gulp.task('mocha', function () {
+
+    //fixtures for all tests
+    var window = require('./test/fixture/window');
+    var templates = require('./test/fixture/templates');
+
+    return gulp.src('./test/unit/**/*.js', {read: false})
+        .pipe(mocha({
+            reporter: 'dot',
+            growl: true,
+            ui: 'bdd'
+        }));
+})
+
 /**
  * Compile javascript
  */
@@ -87,21 +128,20 @@ gulp.task('js', ['hbs'], function() {
 });
 
 gulp.task('css', function () {
-   gulp.src(path.src.styl)
+   return gulp.src(path.src.styl)
        .pipe(stylus({use: [nib()]}))
        .pipe(gulp.dest(path.dest.css))
        .pipe(notify({ message: 'CSS complete' }));
 });
 
-
 gulp.task('sitemap', ['html'], function () {
-    gulp.src('build/**/*.html', { read: false })
+    return gulp.src('build/**/*.html', { read: false })
         .pipe(sitemap({ siteUrl: siteUrl }))
         .pipe(gulp.dest(path.dest.dir));
 });
 
 gulp.task('manifest', ['hbs', 'css', 'js', 'img', 'html', 'sitemap'], function() {
-    gulp.src([path.dest.dir + '*'])
+    return gulp.src([path.dest.dir + '*'])
         .pipe(manifest({
             hash: true,
             preferOnline: true,
@@ -111,7 +151,6 @@ gulp.task('manifest', ['hbs', 'css', 'js', 'img', 'html', 'sitemap'], function()
         }))
         .pipe(gulp.dest(path.dest.dir));
 });
-
 
 /**
  * Compile html
@@ -157,7 +196,7 @@ gulp.task('watch', ['build'], function () {
     gulp.watch([path.src.js], ['js'])
 });
 
-gulp.task('serve', ['watch'], function () {
+gulp.task('server', ['watch'], function () {
     gulp.src('dist')
         .pipe(webserver({
             root: 'dist',
@@ -167,6 +206,8 @@ gulp.task('serve', ['watch'], function () {
         }));
 });
 
+gulp.task('test', ['mocha', 'lint', 'complexity']);
 gulp.task('build', ['hbs', 'css', 'js', 'img', 'html', 'sitemap']);
-gulp.task('prod', ['clean', 'build', 'manifest']);
-gulp.task('default', ['clean', 'build', 'watch', 'serve']);
+gulp.task('prod', ['build', 'manifest']);
+gulp.task('serve', ['test', 'build', 'watch', 'server']);
+gulp.task('default', ['test', 'build']);

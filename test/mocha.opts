@@ -1,0 +1,7 @@
+--require chai
+--require ./test/fixture/window
+--require ./test/fixture/templates
+--reporter dot
+--ui bdd
+--growl
+test/unit/*
