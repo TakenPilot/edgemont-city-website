@@ -6,25 +6,16 @@ var jade = require('gulp-jade');
 var data = require('gulp-data');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
-var handlebars = require('gulp-handlebars');
 var notify = require('gulp-notify');
-var jshint = require('gulp-jshint');
 var config = require('./app/config.json');
-var wrap = require('gulp-wrap');
-var declare = require('gulp-declare');
 var concat = require('gulp-concat');
 var rimraf = require('rimraf');
-var stylus = require('gulp-stylus');
-var nib = require('nib');
 var sitemap = require('gulp-sitemap');
 var manifest = require('gulp-manifest');
 var _ = require('lodash');
 var webserver = require('gulp-webserver');
 var gm = require('gulp-gm');
-var complexity = require('gulp-complexity');
-var stylish = require('jshint-stylish');
-var karma = require('karma').server;
-var mocha = require('gulp-mocha');
+var limitComplexity = require('gulp-limit-complexity');
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -65,6 +56,12 @@ function getConfig() { return config; }
  * Compile templates for dynamic data
  */
 gulp.task('hbs', function() {
+    var handlebars = require('gulp-handlebars'),
+        wrap = require('gulp-wrap'),
+        declare = require('gulp-declare'),
+        concat = require('gulp-concat'),
+        notify = require('gulp-notify');
+
     return gulp.src(path.src.hbs)
         .pipe(handlebars({
             handlebars: require('handlebars')
@@ -80,6 +77,9 @@ gulp.task('hbs', function() {
 });
 
 gulp.task('lint', function () {
+    var jshint = require('gulp-jshint'),
+        stylish = require('jshint-stylish');
+
     return gulp.src(path.src.js)
         .pipe(jshint({
             "globals": {
@@ -92,18 +92,16 @@ gulp.task('lint', function () {
 
 gulp.task('complexity', function () {
     return gulp.src(path.src.js)
-        .pipe(complexity({
-            jsLintXML: 'report.xml',
-            checkstyleXML: 'checkstyle.xml',
-            hideComplexFunctions: false,
-            errorsOnly: false,
-            cyclomatic: [4],
-            halstead: [7],
-            maintainability: 110
+        .pipe(limitComplexity({
+            cyclomatic: 2,
+            halstead: {
+                vocabulary: 25
+            }
         }));
 });
 
 gulp.task('mocha', function () {
+    var mocha = require('gulp-mocha');
 
     //fixtures for all tests
     var window = require('./test/fixture/window');
@@ -111,11 +109,11 @@ gulp.task('mocha', function () {
 
     return gulp.src('./test/unit/**/*.js', {read: false})
         .pipe(mocha({
-            reporter: 'dot',
+            reporter: 'mocha-spec-reporter-async',
             growl: true,
             ui: 'bdd'
         }));
-})
+});
 
 /**
  * Compile javascript
@@ -128,6 +126,10 @@ gulp.task('js', ['hbs'], function() {
 });
 
 gulp.task('css', function () {
+    var stylus = require('gulp-stylus'),
+        nib = require('nib'),
+        notify = require('gulp-notify');
+
    return gulp.src(path.src.styl)
        .pipe(stylus({use: [nib()]}))
        .pipe(gulp.dest(path.dest.css))

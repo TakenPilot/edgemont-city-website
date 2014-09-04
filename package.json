@@ -27,6 +27,7 @@
     "gulp-imagemin": "^1.0.1",
     "gulp-jade": "^0.7.0",
     "gulp-jshint": "^1.8.4",
+    "gulp-limit-complexity": "0.0.1",
     "gulp-manifest": "0.0.6",
     "gulp-notify": "^1.5.0",
     "gulp-rename": "^1.2.0",
@@ -44,8 +45,10 @@
     "karma": "^0.12.22",
     "lodash": "^2.4.1",
     "lodash-deep": "^1.2.1",
+    "mocha-spec-reporter-async": "0.0.2",
     "nib": "^1.0.3",
     "rimraf": "^2.2.8",
+    "vinyl-map": "^1.0.1",
     "vinyl-source-stream": "^0.1.1"
   },
   "devDependencies": {
