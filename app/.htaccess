@@ -1,0 +1,6 @@
+Options +MultiViews
+AddLanguage zh .zh.html
+AddLanguage en .en.html
+LanguagePriority en zh
+ForceLanguagePriority Fallback
+AddHandler type-map html

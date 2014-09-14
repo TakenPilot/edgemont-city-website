@@ -1,3 +1,26 @@
 {
-    "pageTitle": "Edgemont City Asian Cuisine"
+  "lang": "en",
+  "googleDocs" : {
+    "menu": {
+      "key": "1WxmpQekHmzmA6xisZZL0xgLH6cz845qvopPAL_FSULc"
+    },
+    "detail": {
+      "key": "1jZzlOtwprlAD9apCebwWcCPRYztnzX7X3XzjWFuf2Nw"
+    }
+  },
+  "pageTitle": "Edgemont City Asian Cuisine",
+  "sitemap": [
+    {
+      "label": "menu",
+      "href":"#menu"
+    },
+    {
+      "label": "address",
+      "href": "#address"
+    },
+    {
+      "label": "phoneNumber",
+      "href": "#phone-number"
+    }
+  ]
 }

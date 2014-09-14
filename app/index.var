@@ -1,0 +1,9 @@
+URI: index.html
+
+URI: index.en.html
+Content-Type: text/html
+Content-Language: en
+
+URI: index.ch.html
+Content-Type: text/html
+Content-Language: ch
