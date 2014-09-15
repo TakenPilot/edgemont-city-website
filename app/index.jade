@@ -2,14 +2,13 @@ doctype html
 html(lang=lang, manifest="app.manifest")
     head
         meta(charset="utf-8")
-        title #{pageTitle}
+        title #{name.label}
         script(type="text/javascript", src="js/app.js")
         script(type="text/javascript", src="js/templates.js")
         link(rel='stylesheet', href='css/style-guide.css')
      body
          include ./header.jade
-         img(src='img/dsc00654.webp')
-         #details
-         #menu
+         include ./highlights.jade
+         include ./menu.jade
          include ./footer.jade
 

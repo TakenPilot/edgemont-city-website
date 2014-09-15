@@ -19,6 +19,8 @@ var limitComplexity = require('gulp-limit-complexity');
 var es = require('event-stream');
 var rename = require('gulp-rename');
 var googleSpreadsheet = require('./googleSpreadsheet');
+var Promise = require('bluebird');
+var util = require('util');
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -37,7 +39,8 @@ var layout = {
     js: 'js/**/*.js',
     jsRoot: 'js/app.js',
     styl: 'css/**/*.styl',
-    jade: '**/index.jade',
+    jade: '**/*.jade',
+    jadeIndex: '**/index.jade',
     img: 'img/*'
   }
 };
@@ -53,21 +56,23 @@ var path = {
 };
 
 
-function getConfig(language) {
-  var menu = googleSpreadsheet.get(config.googleDocs.menu.key),
-    detail = googleSpreadsheet.get(config.googleDocs.detail.key);
+function getConfig(languages) {
+  return Promise.all([
+    googleSpreadsheet.getListByProperty(config.googleDocs.detail.key, 'name'),
+    googleSpreadsheet.getList(config.googleDocs.menu.key),
+    googleSpreadsheet.getList(config.googleDocs.groupMenu.key)
+  ]).spread(function(detail, menu, groupMenu) {
+    var config = {};
+    _.each(languages, function (language) {
+      config[language] = _.mapValues(detail, function (item) { return googleSpreadsheet.removeSuffix(item, '_' + language); });
+      config[language].menu = _.map(menu, function (item) { return googleSpreadsheet.removeSuffix(item, '_' + language); });
+      config[language].groupMenu = _.map(groupMenu, function (item) { return googleSpreadsheet.removeSuffix(item, '_' + language); });
+      config[language].lang = language;
+      _.assign(config[language], _.pick(require('./app/config.json'), ['sitemap']));
+    });
 
-  switch(language) {
-    case "en":
-      break;
-    case "zh":
-      break;
-  }
-
-  return {
-    menu: menu,
-    detail: detail
-  };
+    return config;
+  });
 }
 
 /**
@@ -177,8 +182,15 @@ gulp.task('manifest', ['hbs', 'css', 'js', 'img', 'html', 'sitemap'], function (
  * Compile html
  */
 gulp.task('html', function () {
-  var english = gulp.src(path.src.jade).pipe(data(getConfig('en'))).pipe(rename({suffix: '.en'})),
-    mandarin = gulp.src(path.src.jade).pipe(data(getConfig('zh'))).pipe(rename({suffix: '.zh'}));
+  var configPromise = getConfig(['en', 'zh'])
+  //.tap(function (result) { console.log(util.inspect(result, true, 5)) });
+
+  var english = gulp.src(path.src.jadeIndex)
+      .pipe(data(configPromise.get('en')))
+      .pipe(rename({suffix: '.en'})),
+    mandarin = gulp.src(path.src.jadeIndex)
+      .pipe(data(configPromise.get('zh')))
+      .pipe(rename({suffix: '.zh'}));
 
   return es.merge(english, mandarin)
     .pipe(jade())

@@ -19,62 +19,76 @@ function getSpreadsheet(key) {
     }
     else {
       var entries = _.deepGet(result, 'feed.entry');
-      deferred.resolve(groupByRow(entries));
+      entries = _.groupBy(_.pluck(entries, cellProp), 'row');
+      deferred.resolve(mapColumnsToHeader(groupByRow(entries)));
     }
   });
   return deferred.promise;
 }
 
 function groupByRow(entries){
-  return _.groupBy(_.filter(_.map(entries, function (entry) {
-    return entry[cellProp];
-  })), 'row');
-}
-
-/**
- * @returns {Promise}
- */
-function getMenu() {
-  return getSpreadsheet(menuUrl).then(function (menu) {
-    return _.mapValues(menu, function (list) {
-      return {
-        name: _.deepGet(list, '0.$t'),
-        cost: _.deepGet(list, '1.$t')
-      };
-    });
-  });
-}
-
-/**
- * @returns {Promise}
- */
-function getDetails() {
-  return getSpreadsheet(detailsUrl).then(function (details) {
-    return _.reduce(details, function (obj, list) {
-      var key = _.deepGet(list, '0.$t');
-      if (key) {
-        obj[key] = _.deepGet(list, '1.$t');
+  var groups = _.reduce(entries, function (list, value, rowIndex) {
+    //value is [{}]
+    var row = _.reduce(value, function (row, value) {
+      //value is {col: string, row: string, $t: string}
+      var colIndex = parseInt(value.col, 10);
+      if (colIndex != undefined && !isNaN(colIndex)) {
+        row[colIndex - 1] = value['$t'];
       }
-      return obj;
-    }, {});
+      return row;
+    }, []);
+    rowIndex = parseInt(rowIndex, 10);
+    if (rowIndex != undefined && !isNaN(rowIndex)) {
+      list[rowIndex - 1] = row;
+    }
+    return list;
+  }, []);
+  return groups;
+}
+
+function mapColumnsToHeader(rows) {
+
+
+  var headers = rows.shift();
+
+  rows = _.map(rows, function (row) {
+    return _.zipObject(headers, row);
   });
+
+  rows = _.map(rows, function (row) {
+    return _.pick(row, function (value) {
+      return !!value;
+    })
+  });
+  return rows;
 }
 
 var GoogleSpreadsheet = function () {};
 GoogleSpreadsheet.prototype = {
-  get: function (key, cb) {
-    rest.get(googleDocApi.replace('[key]', key)).on('complete', function (result, res) {
-      var deferred = Promise.defer();
-      if (result instanceof Error) {
-        console.error('error', arguments);
-        deferred.reject(result);
-      }
-      else {
-        var entries = _.deepGet(result, 'feed.entry');
-        deferred.resolve(result);
-      }
-      return deferred.promise;
+  getList: function (key) {
+    return getSpreadsheet(key)
+  },
+  getListByProperty: function (key, property) {
+    return getSpreadsheet(key).then(function (list) {
+      return _.indexBy(list, property);
     });
+  },
+  removeSuffix: function (obj, suffix) {
+    var newObj = _.isArray(obj) ? [] : {};
+
+    _.each(obj, function (value, key) {
+      var index = key.indexOf(suffix);
+      if (index > -1) {
+        var newKey = key.substring(0, index);
+        if (newKey) {
+          newObj[newKey] = value;
+        }
+      } else {
+        newObj[key] = value;
+      }
+    });
+
+    return newObj;
   }
 };
 module.exports = new GoogleSpreadsheet();
