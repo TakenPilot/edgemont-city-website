@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var webP = require('gulp-webp');
 var imageMin = require('gulp-imagemin');
 var pngCrush = require('imagemin-pngcrush');
-var jade = require('gulp-jade');
 var data = require('gulp-data');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
@@ -31,17 +30,20 @@ var layout = {
     js: 'js',
     hbs: 'hbs',
     css: 'css',
-    img: 'img'
+    img: 'img',
+    font: 'font'
   },
   src: {
     dir: '',
-    hbs: 'hbs/**/*.hbs',
+    hbs: '**/*.hbs',
+    hbsIndex: 'index.hbs',
     js: 'js/**/*.js',
     jsRoot: 'js/app.js',
     styl: 'css/**/*.styl',
     jade: '**/*.jade',
     jadeIndex: '**/index.jade',
-    img: 'img/*'
+    img: 'img/*',
+    font: 'font/*.ttf'
   }
 };
 
@@ -58,20 +60,29 @@ var path = {
 
 function getConfig(languages) {
   return Promise.all([
-    googleSpreadsheet.getListByProperty(config.googleDocs.detail.key, 'name'),
-    googleSpreadsheet.getList(config.googleDocs.menu.key),
-    googleSpreadsheet.getList(config.googleDocs.groupMenu.key)
+    googleSpreadsheet.getListByProperty({key: config.googleDocs.detail.key}, 'name'),
+    googleSpreadsheet.getList({
+      key: config.googleDocs.menu.key,
+      categories: config.googleDocs.menu.categories
+    }),
+    googleSpreadsheet.getList({
+      key:config.googleDocs.groupMenu.key,
+      categories: config.googleDocs.groupMenu.categories
+    })
   ]).spread(function(detail, menu, groupMenu) {
+
     var config = {};
     _.each(languages, function (language) {
       config[language] = _.mapValues(detail, function (item) { return googleSpreadsheet.removeSuffix(item, '_' + language); });
-      config[language].menu = _.map(menu, function (item) { return googleSpreadsheet.removeSuffix(item, '_' + language); });
-      config[language].groupMenu = _.map(groupMenu, function (item) { return googleSpreadsheet.removeSuffix(item, '_' + language); });
+      config[language].menu = menu;
+      config[language].groupMenu = groupMenu;
       config[language].lang = language;
       _.assign(config[language], _.pick(require('./app/config.json'), ['sitemap']));
     });
 
     return config;
+  }).catch(function (err) {
+    console.error(err);
   });
 }
 
@@ -182,20 +193,25 @@ gulp.task('manifest', ['hbs', 'css', 'js', 'img', 'html', 'sitemap'], function (
  * Compile html
  */
 gulp.task('html', function () {
-  var configPromise = getConfig(['en', 'zh'])
-  //.tap(function (result) { console.log(util.inspect(result, true, 5)) });
+  var handlebars = require('gulp-static-handlebars');
 
-  var english = gulp.src(path.src.jadeIndex)
-      .pipe(data(configPromise.get('en')))
-      .pipe(rename({suffix: '.en'})),
-    mandarin = gulp.src(path.src.jadeIndex)
-      .pipe(data(configPromise.get('zh')))
-      .pipe(rename({suffix: '.zh'}));
+  var configPromise = getConfig(['en', 'zh']);
+
+  var english = gulp.src(path.src.hbsIndex)
+      .pipe(handlebars(configPromise.get('en'), {partials: gulp.src('./app/hbs/partials/**/*.hbs')}))
+      .pipe(rename({suffix: '.en', extname: '.html'})),
+    mandarin = gulp.src(path.src.hbsIndex)
+      .pipe(handlebars(configPromise.get('zh'), {partials: gulp.src('./app/hbs/partials/**/*.hbs')}))
+      .pipe(rename({suffix: '.zh', extname: '.html'}));
 
   return es.merge(english, mandarin)
-    .pipe(jade())
     .pipe(gulp.dest(path.dest.dir))
     .pipe(notify({ message: 'Html complete', onLast: true }));
+});
+
+gulp.task('font', function () {
+  return gulp.src(path.src.font)
+    .pipe(gulp.dest(path.dest.font));
 });
 
 /**
@@ -206,7 +222,6 @@ gulp.task('html', function () {
  */
 gulp.task('img', function () {
   return gulp.src(path.src.img)
-    //.pipe(gm(function (file) { return file.resize(600); }, { imageMagick: true }))
     .pipe(imageMin({
       progressive: true,
       svgoPlugins: [
@@ -215,6 +230,9 @@ gulp.task('img', function () {
       use: [pngCrush()]
     }))
     .pipe(webP())
+    .pipe(gulp.dest(path.dest.img))
+    .pipe(gm(function (file) { return file.resize('200%'); }, { imageMagick: true }))
+    .pipe(rename({suffix:'@2x'}))
     .pipe(gulp.dest(path.dest.img))
     .pipe(notify({ message: 'Image optimization complete', onLast: true }));
 });
@@ -227,14 +245,15 @@ gulp.task('clean', function (done) {
  * Watch all app files and only run the process they need for output
  */
 gulp.task('watch', ['build'], function () {
-  gulp.watch([path.src.jade], ['html']);
+  gulp.watch([path.src.hbs], ['html']);
   gulp.watch([path.src.styl], ['css']);
   gulp.watch([path.src.hbs], ['hbs']);
-  gulp.watch([path.src.js], ['js'])
+  gulp.watch([path.src.js], ['js']);
+  gulp.watch([path.src.font], ['font'])
 });
 
 gulp.task('server', ['watch'], function () {
-  gulp.src('dist')
+  return gulp.src('dist')
     .pipe(webserver({
       root: 'dist',
       directoryListing: false,
@@ -244,7 +263,7 @@ gulp.task('server', ['watch'], function () {
 });
 
 gulp.task('test', ['mocha', 'lint', 'complexity']);
-gulp.task('build', ['hbs', 'css', 'js', 'img', 'html', 'sitemap']);
+gulp.task('build', ['font', 'hbs', 'css', 'js', 'img', 'html', 'sitemap']);
 gulp.task('prod', ['build', 'manifest']);
 gulp.task('serve', ['test', 'build', 'watch', 'server']);
 gulp.task('default', ['test', 'build']);

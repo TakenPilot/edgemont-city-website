@@ -1,8 +1,37 @@
+@import 'nib'
+
+clr = #897969
+clr2 = #9A3324
+clr3 = #E3E1DB
+clr4 = #CBCE66
+clr5 = #E1E3A6
+mobile-header-height = 200px
+tablet-header-height = 170px
+desktop-header-height = 150px
+
+desktop-width = 1200px
+tablet-width = 900px
+mobile-width = 650px
+minimum-width = 600px
+
+@font-face {
+  font-family UpperEastSide
+  src url(../font/UpperEastSide.ttf)
+  font-size 4rem
+}
+
 h1, h2, h3, h4, h5, h6
   clear both
 
+h1
+  font-family UpperEastSide, arial, sans-serif
+  text-transform capitalize;
+  padding-left 4rem;
+
 body
-  background brown
+  background clr4
+  margin 0
+  padding 0
 
 ul
   list-style-type none
@@ -10,52 +39,202 @@ ul
 li
   padding-top 1rem
 
+a[name]
+  display block
+  position relative
+  @media screen and (max-width tablet-width)
+    top (-(mobile-header-height))
+
+  @media screen and (min-width tablet-width) and (max-width desktop-width)
+    top (-(tablet-header-height))
+
+  @media screen and (min-width desktop-width)
+    top (-(desktop-header-height))
+
+  visibility hidden
+
+table
+  width 100%
+  td.price
+    text-align right
+
+img {
+  max-width 100%
+  height auto !important
+}
+
 .divider
   padding-right 0.7rem
   padding-left 0.7rem
 
-h1
-  font-size 4rem
+.container
+  margin-right auto
+  margin-left auto
+  padding 1rem
+  box-sizing border-box
+  @media screen and (max-width tablet-width)
+    width mobile-width
+
+  @media screen and (min-width tablet-width) and (max-width desktop-width)
+    width tablet-width
+
+  @media screen and (min-width desktop-width)
+    width desktop-width
+
+
+.menu-container
+  border-radius 10px
+  background clr5
+  margin-right auto
+  margin-left auto
+  margin-top 1rem
+  margin-bottom 1rem
+  padding 1rem
 
 h2
   margin-top 2rem
 
 header
-  background brown
+  min-width minimum-width
+  background clr2
+  margin 0
+  padding 0
   top 0
   width 100%
   position fixed
-  .quick-lookup //taken right out
-    position absolute
-    padding-top 0.5rem
-    padding-right 1rem
-    padding-left 1rem
-    padding-bottom 0.5rem
-    top 0
-    right 0
-    background white
+  overflow hidden
+  @media screen and (max-width tablet-width)
+    height mobile-header-height
+    h1
+      font-size 3.7rem
+      margin 1rem
+      margin-top 2.5rem
+      padding 0rem
+    .quick-lookup
+      font-size 1rem
+      width 100%
+      padding-top 0.5rem
+      padding-right 1rem
+      padding-left 1rem
+      padding-bottom 0.5rem
+      bottom 0
+      background white
+      span
+        display block
+        margin-top 0.3rem
+      span.divider
+        display none
+
+  @media screen and (min-width tablet-width) and (max-width desktop-width)
+    height tablet-header-height
+    h1
+      font-size 4rem
+      margin 1rem
+      margin-top 2rem
+      padding 0rem
+    .quick-lookup
+      box-sizing border-box
+      text-align center
+      width 100%
+      padding 0.5rem
+      top 0
+      right 0
+      background white
+
+  @media screen and (min-width desktop-width)
+    height desktop-header-height
+    h1
+      font-size 5.5rem
+      margin 1rem
+      margin-top 2rem
+      padding 0rem
+    .quick-lookup //taken right out
+      position absolute
+      padding-top 0.5rem
+      padding-right 1rem
+      padding-left 1rem
+      padding-bottom 0.5rem
+      top 0
+      right 0
+      background white
+
+
+
+.clear
+  clearfix()
+
+.pull-right
+  float right
+
+desktop-third-width = (desktop-width/3 - 14rem)
+desktop-third-height = (desktop-width/3*2/3 - 14rem)
+tablet-third-width = (tablet-width/3 - 14rem)
+tablet-third-height = (tablet-width/3*2/3 - 14rem)
+mobile-third-width = (mobile-width/3 - 14rem)
+mobile-third-height = (mobile-width/3*2/3 - 14rem)
 
 .highlights
+  @media screen and (max-width tablet-width)
+    height mobile-third-height * 2
+
+  @media screen and (min-width tablet-width) and (max-width desktop-width)
+    height tablet-third-height * 2
+
+  @media screen and (min-width desktop-width)
+    height desktop-third-height * 2
+
   margin-top 12rem
+  .image
+    margin 0
+    padding 0
+    display inline-block
+    @media screen and (max-width tablet-width)
+      width mobile-third-width
+      height mobile-third-height
+
+    @media screen and (min-width tablet-width) and (max-width desktop-width)
+      width tablet-third-width
+      height tablet-third-height
+
+    @media screen and (min-width desktop-width)
+      width desktop-third-width
+      height desktop-third-height
+
+  .image1
+    image '../img/dsc00654.webp' desktop-third-width desktop-third-height
+  .image2
+    image '../img/dsc00656.webp' desktop-third-width desktop-third-height
+  .image3
+    image '../img/dsc00657.webp' desktop-third-width desktop-third-height
+  .image4
+    image '../img/dsc00658.webp' desktop-third-width desktop-third-height
+  .image5
+    image '../img/dsc00659.webp' desktop-third-width desktop-third-height
+  .image6
+    image '../img/dsc00660.webp' desktop-third-width desktop-third-height
 
 .menu
-  max-width 800px
   .price
-    float right
     padding-right 1rem
     padding-left 1rem
   .small:before
     content " Small "
     display inline
     font-style italic
-
   .large:before
     content " Large "
     display inline
     font-style italic
+  .each-group
+    height 1rem
 
 
-.sitemap
-  a
-    color black
-    text-decoration none
+footer
+  padding-bottom 1rem
+  background clr5
+  .sitemap
+    margin-bottom 0
+
+    a
+      color black
+      text-decoration none

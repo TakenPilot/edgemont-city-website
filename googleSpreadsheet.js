@@ -1,5 +1,6 @@
 var Promise = require('bluebird'),
   _ = require('lodash'),
+  util = require('util'),
   rest = require('restler');
 
 _.mixin(require("lodash-deep"));
@@ -27,7 +28,7 @@ function getSpreadsheet(key) {
 }
 
 function groupByRow(entries){
-  var groups = _.reduce(entries, function (list, value, rowIndex) {
+  return _.reduce(entries, function (list, value, rowIndex) {
     //value is [{}]
     var row = _.reduce(value, function (row, value) {
       //value is {col: string, row: string, $t: string}
@@ -43,12 +44,9 @@ function groupByRow(entries){
     }
     return list;
   }, []);
-  return groups;
 }
 
 function mapColumnsToHeader(rows) {
-
-
   var headers = rows.shift();
 
   rows = _.map(rows, function (row) {
@@ -63,15 +61,30 @@ function mapColumnsToHeader(rows) {
   return rows;
 }
 
+function categorize(list, categories) {
+  if (categories.length) {
+    categories = _.clone(categories);
+    var category = categories.shift();
+    var grouping =_.groupBy(list, category);
+    list = _.mapValues(grouping, function (group) {
+      return categorize(group, categories);
+    });
+  }
+  return list;
+}
+
 var GoogleSpreadsheet = function () {};
 GoogleSpreadsheet.prototype = {
-  getList: function (key) {
-    return getSpreadsheet(key)
+  getList: function (options) {
+    return getSpreadsheet(options.key)
+      .then(function (list) {
+        return categorize(list, options.categories || []);
+      })
   },
-  getListByProperty: function (key, property) {
-    return getSpreadsheet(key).then(function (list) {
+  getListByProperty: function (options, property) {
+    return this.getList(options).then(function (list) {
       return _.indexBy(list, property);
-    });
+    })
   },
   removeSuffix: function (obj, suffix) {
     var newObj = _.isArray(obj) ? [] : {};

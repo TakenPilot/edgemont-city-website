@@ -1,0 +1,48 @@
+<a name="menu"></a>
+<div class="menu-container">
+    <h2>{{menuName.label}}</h2>
+    {{#each menu}}
+        <h3>{{@key}}</h3>
+        <ul class="menu">
+            {{#each this}}
+                <li>
+                    <span class="name">{{name}}</span>
+                    <span class="pull-right">
+
+                        {{#if price-small}}<span class="price small">{{price-small}}</span>{{/if}}
+                        {{#if price-large}}<span class="price large">{{price-large}}</span>{{/if}}
+                        {{#if price-regular}}<span class="price regular">{{price-regular}}</span>{{/if}}
+                    </span>
+
+                </li>
+            {{/each}}
+        </ul>
+    {{/each}}
+</div>
+
+<a name="group-menu"></a>
+<div class="menu-container">
+    <h2>{{groupMenuName.label}}</h2>
+    {{#each groupMenu}}
+        <h3>{{@key}}</h3>
+        <table>
+            {{#each this}}
+                <tr><td>
+                    <span class="name">{{0.name}}</span>
+                </td><td style="width:25%">
+                    <table>
+                    {{#each this}}
+                        <tr><td style="width:50%">
+                            <span class="group-size">{{groupSize}}</span>
+                        </td><td class="price">
+                            <span class="price">{{price}}</span>
+                            <span class="note">{{note}}</span>
+                        </td></tr>
+                    {{/each}}
+                    </table>
+                </td></tr>
+
+            {{/each}}
+        </table>
+    {{/each}}
+</div>
