@@ -20,6 +20,9 @@ var rename = require('gulp-rename');
 var googleSpreadsheet = require('./googleSpreadsheet');
 var Promise = require('bluebird');
 var util = require('util');
+var awspublish = require('gulp-awspublish');
+var awspublishRouter = require("gulp-awspublish-router");
+var parallelize = require("concurrent-transform");
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -260,6 +263,84 @@ gulp.task('server', ['watch'], function () {
       livereload: true,
       port: 8000
     }));
+});
+
+gulp.task('publish', function() {
+
+  // create a new publisher
+  var publisher = awspublish.create({
+    key: process.env.AWS_ACCESS_KEY_ID,
+    secret: process.env.AWS_SECRET_ACCESS_KEY,
+    bucket: 'beta.edgemont-city-website',
+    region: 'us-west-2'
+  });
+
+  //define custom headers
+  var headers = {
+    'Cache-Control': 'max-age=315360000, no-transform, public',
+    'Content-Encoding': 'gzip'
+  };
+
+  return gulp.src('./dist/**/*')
+
+    // gzip, Set Content-Encoding headers and add .gz extension
+    .pipe(awspublishRouter({
+      routes: {
+        "(.*html)$": {
+          gzip: true,
+          cacheTime: 630720000, //2 years
+          headers: {
+            "Content-Encoding": "gzip",
+            "Content-Type": "text/html"
+          }
+        },
+        "(.*js)$": {
+          gzip: true,
+          cacheTime: 630720000, //2 years
+          headers: {
+            "Content-Encoding": "gzip",
+            "Content-Type": "application/javascript"
+          }
+        },
+        "(.*css)$": {
+          gzip: true,
+          cacheTime: 630720000, //2 years
+          headers: {
+            "Content-Encoding": "gzip",
+            "Content-Type": "text/css"
+          }
+        },
+        "(.*webp)$": {
+          gzip: true,
+          cacheTime: 630720000, //2 years
+          headers: {
+            "Content-Encoding": "gzip",
+            "Content-Type": "image/webp"
+          }
+        },
+        "(.*ttf)$": {
+          gzip: true,
+          cacheTime: 630720000, //2 years
+          headers: {
+            "Content-Encoding": "gzip",
+            "Content-Type": "application/x-font-ttf"
+          }
+        },
+        "^.+$": "$&"
+      }
+    }))
+
+    // publisher will add Content-Length, Content-Type and  headers specified above
+    // If not specified it will set x-amz-acl to public-read by default
+    .pipe(parallelize(publisher.publish(headers), 10))
+
+    .pipe(publisher.sync())
+
+    // create a cache file to speed up consecutive uploads
+    .pipe(publisher.cache())
+
+    // print upload updates to console
+    .pipe(awspublish.reporter());
 });
 
 gulp.task('test', ['mocha', 'lint', 'complexity']);
