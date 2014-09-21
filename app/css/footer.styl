@@ -1,5 +1,19 @@
 footer, .footer
   padding-bottom 1rem
   background clr5
-  .sitemap
-    margin-bottom 0
+  @media screen and (max-width mobile-width)
+    .sitemap
+      margin-bottom 0
+    .divider
+      display none
+    li
+      display block
+
+  @media screen and (min-width mobile-width)
+    .sitemap
+      margin-bottom 0
+      display table
+      margin-left auto
+      margin-right auto
+    .divider, li
+      display inline

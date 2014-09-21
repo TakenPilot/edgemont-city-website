@@ -1,6 +1,7 @@
 <footer>
     <ul class="sitemap">
         {{#each sitemap}}
+            {{#not-first}}<div class="divider"> | </div>{{/not-first}}
             <li><a href="{{href}}">{{label}}</a></li>
         {{/each}}
     </ul>

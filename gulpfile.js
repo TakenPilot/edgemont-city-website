@@ -201,10 +201,16 @@ gulp.task('html', function () {
   var configPromise = getConfig(['en', 'zh']);
 
   var english = gulp.src(path.src.hbsIndex)
-      .pipe(handlebars(configPromise.get('en'), {partials: gulp.src('./app/hbs/partials/**/*.hbs')}))
+      .pipe(handlebars(configPromise.get('en'), {
+        partials: gulp.src('./app/hbs/partials/**/*.hbs'),
+        helpers: gulp.src('./app/hbs/helpers/**/*.js')
+      }))
       .pipe(rename({suffix: '.en', extname: '.html'})),
     mandarin = gulp.src(path.src.hbsIndex)
-      .pipe(handlebars(configPromise.get('zh'), {partials: gulp.src('./app/hbs/partials/**/*.hbs')}))
+      .pipe(handlebars(configPromise.get('zh'), {
+        partials: gulp.src('./app/hbs/partials/**/*.hbs'),
+        helpers: gulp.src('./app/hbs/helpers/**/*.js')
+      }))
       .pipe(rename({suffix: '.zh', extname: '.html'}));
 
   return es.merge(english, mandarin)
