@@ -85,16 +85,6 @@ img {
   @media screen and (min-width desktop-width)
     width desktop-width
 
-
-.menu-container
-  border-radius 10px
-  background clr5
-  margin-right auto
-  margin-left auto
-  margin-top 1rem
-  margin-bottom 1rem
-  padding 1rem
-
 h2
   margin-top 2rem
 
@@ -111,61 +101,8 @@ tablet-third-height = (tablet-width/3*2/3 - 14rem)
 mobile-third-width = (mobile-width/3 - 14rem)
 mobile-third-height = (mobile-width/3*2/3 - 14rem)
 
-.highlights
-  @media screen and (max-width tablet-width)
-    height mobile-third-height * 2
-
-  @media screen and (min-width tablet-width) and (max-width desktop-width)
-    height tablet-third-height * 2
-
-  @media screen and (min-width desktop-width)
-    height desktop-third-height * 2
-
-  margin-top 12rem
-  .image
-    margin 0
-    padding 0
-    display inline-block
-    @media screen and (max-width tablet-width)
-      width mobile-third-width
-      height mobile-third-height
-
-    @media screen and (min-width tablet-width) and (max-width desktop-width)
-      width tablet-third-width
-      height tablet-third-height
-
-    @media screen and (min-width desktop-width)
-      width desktop-third-width
-      height desktop-third-height
-
-  .image1
-    image '../img/dsc00654.webp' desktop-third-width desktop-third-height
-  .image2
-    image '../img/dsc00656.webp' desktop-third-width desktop-third-height
-  .image3
-    image '../img/dsc00657.webp' desktop-third-width desktop-third-height
-  .image4
-    image '../img/dsc00658.webp' desktop-third-width desktop-third-height
-  .image5
-    image '../img/dsc00659.webp' desktop-third-width desktop-third-height
-  .image6
-    image '../img/dsc00660.webp' desktop-third-width desktop-third-height
-
-.menu
-  .price
-    padding-right 1rem
-    padding-left 1rem
-  .small:before
-    content " Small "
-    display inline
-    font-style italic
-  .large:before
-    content " Large "
-    display inline
-    font-style italic
-  .each-group
-    height 1rem
-
 @require 'header'
+@require 'highlights'
+@require 'menu'
 @require 'footer'
 
