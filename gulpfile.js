@@ -42,7 +42,7 @@ var layout = {
     hbsIndex: 'index.hbs',
     js: 'js/**/*.js',
     jsRoot: 'js/app.js',
-    styl: 'css/**/*.styl',
+    styl: 'css/style-guide.styl',
     jade: '**/*.jade',
     jadeIndex: '**/index.jade',
     img: 'img/*',

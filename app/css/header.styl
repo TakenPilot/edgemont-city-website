@@ -1,0 +1,63 @@
+header, .header
+  min-width minimum-width
+  background clr2
+  margin 0
+  padding 0
+  top 0
+  width 100%
+  position fixed
+  overflow hidden
+  @media screen and (max-width tablet-width)
+    height mobile-header-height
+    h1
+      font-size 3.7rem
+      margin 1rem
+      margin-top 2.5rem
+      padding 0rem
+    .quick-lookup
+      font-size 1rem
+      width 100%
+      padding-top 0.5rem
+      padding-right 1rem
+      padding-left 1rem
+      padding-bottom 0.5rem
+      bottom 0
+      background white
+      span
+        display block
+        margin-top 0.3rem
+      span.divider
+        display none
+
+  @media screen and (min-width tablet-width) and (max-width desktop-width)
+    height tablet-header-height
+    h1
+      font-size 4rem
+      margin 1rem
+      margin-top 2rem
+      padding 0rem
+    .quick-lookup
+      box-sizing border-box
+      text-align center
+      width 100%
+      padding 0.5rem
+      top 0
+      right 0
+      background white
+
+  @media screen and (min-width desktop-width)
+    height desktop-header-height
+    h1
+      font-size 5.5rem
+      margin 1rem
+      margin-top 2rem
+      padding 0rem
+    .quick-lookup //taken right out
+      position absolute
+      padding-top 0.5rem
+      padding-right 1rem
+      padding-left 1rem
+      padding-bottom 0.5rem
+      top 0
+      right 0
+      background white
