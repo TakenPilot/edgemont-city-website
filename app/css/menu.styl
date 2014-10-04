@@ -1,23 +1,57 @@
-.menu-container
-  border-radius 10px
-  background clr5
-  margin-right auto
-  margin-left auto
-  margin-top 1rem
-  margin-bottom 1rem
-  padding 1rem
+.menu-header
 
-.menu
-  .price
-    padding-right 1rem
-    padding-left 1rem
-  .small:before
-    content " Small "
-    display inline
-    font-style italic
-  .large:before
-    content " Large "
-    display inline
-    font-style italic
-  .each-group
-    height 1rem
+.menu-container
+  @media screen and (max-width desktop-width)
+    .image
+      display none
+
+  @media screen and (min-width desktop-width)
+    .image
+      display inline-block
+      margin 0
+      padding 0
+      width desktop-third-width
+      height desktop-third-height
+
+  .photo-list
+    @media screen and (max-width desktop-width)
+      display none
+    @media screen and (min-width desktop-width)
+      vertical-align top
+      display inline-block
+      margin-right 1rem
+      margin-left 1rem
+
+  .menu-section-container
+    @media screen and (max-width desktop-width)
+      margin-right auto
+      margin-left auto
+    @media screen and (min-width desktop-width)
+      width (desktop-width / 2) - 80rem
+      display inline-block
+      margin-right 1rem
+      margin-left 1rem
+      .image
+        display block
+        margin 1rem
+
+    border-radius 10px
+    background clr5
+    margin-top 1rem
+    margin-bottom 1rem
+    padding 1rem
+
+  .menu
+    .price
+      padding-right 1rem
+      padding-left 1rem
+    .small:before
+      content " Small "
+      display inline
+      font-style italic
+    .large:before
+      content " Large "
+      display inline
+      font-style italic
+    .each-group
+      height 1rem

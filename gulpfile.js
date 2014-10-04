@@ -42,7 +42,8 @@ var layout = {
     hbsIndex: 'index.hbs',
     js: 'js/**/*.js',
     jsRoot: 'js/app.js',
-    styl: 'css/style-guide.styl',
+    styl: 'css/**/*.styl',
+    stylRoot: 'css/style-guide.styl',
     jade: '**/*.jade',
     jadeIndex: '**/index.jade',
     img: 'img/*',
@@ -168,7 +169,7 @@ gulp.task('css', function () {
     nib = require('nib'),
     notify = require('gulp-notify');
 
-  return gulp.src(path.src.styl)
+  return gulp.src(path.src.stylRoot)
     .pipe(stylus({use: [nib()]}))
     .pipe(gulp.dest(path.dest.css))
     .pipe(notify({ message: 'CSS complete' }));
