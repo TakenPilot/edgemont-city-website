@@ -1,10 +1,21 @@
 var $ = require('jquery');
-Handlebars = require('handlebars'); //global for templates
-var AppData = require('./appData');
-var _ = require("lodash");
-_.mixin(require("lodash-deep"));
+
+function scrollTop(hash, $target) {
+  $('html, body').stop().animate({'scrollTop': $target.offset().top}, 900, 'swing', function () {
+    window.location.hash = hash;
+  });
+}
 
 $(function() {
-    var appData = new AppData();
-    appData.getData();
+  $('a[href^="#"]').on('click',function (e) {
+    e.preventDefault();
+    var hash = this.hash;
+
+    var $target = $(hash);
+    $target = $target.length ? $target : $('[name=' + hash.slice(1) +']');
+
+    if ($target.length) {
+      scrollTop(hash, $target);
+    }
+  });
 });

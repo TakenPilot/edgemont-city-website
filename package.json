@@ -1,6 +1,7 @@
 {
   "name": "edgemont-city-website",
   "version": "0.0.0",
+  "private": true,
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +10,6 @@
   "author": "Dane Stuckel",
   "license": "ISC",
   "dependencies": {
-    "backbone": "^1.1.2",
     "bluebird": "^2.3.2",
     "browserify": "^5.10.1",
     "event-stream": "^3.1.7",
@@ -38,10 +38,10 @@
     "gulp-webserver": "^0.7.2",
     "gulp-wrap": "^0.3.0",
     "handlebars": "^2.0.0-alpha.4",
+    "handlebars-helpers": "^0.5.8",
     "imagemin-pngcrush": "^0.1.0",
     "jquery": "^2.1.1",
     "jshint-stylish": "^0.4.0",
-    "karma": "^0.12.22",
     "lodash": "^2.4.1",
     "lodash-deep": "^1.2.1",
     "mocha-spec-reporter-async": "0.0.2",

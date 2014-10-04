@@ -23,6 +23,7 @@ var util = require('util');
 var awspublish = require('gulp-awspublish');
 var awspublishRouter = require("gulp-awspublish-router");
 var parallelize = require("concurrent-transform");
+var helpers = require('handlebars-helpers/lib/helper-lib').register(require('handlebars'), {});
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -90,30 +91,6 @@ function getConfig(languages) {
   });
 }
 
-/**
- * Compile templates for dynamic data
- */
-gulp.task('hbs', function () {
-  var handlebars = require('gulp-handlebars'),
-    wrap = require('gulp-wrap'),
-    declare = require('gulp-declare'),
-    concat = require('gulp-concat'),
-    notify = require('gulp-notify');
-
-  return gulp.src(path.src.hbs)
-    .pipe(handlebars({
-      handlebars: require('handlebars')
-    }))
-    .pipe(wrap('Handlebars.template(<%= contents %>)'))
-    .pipe(declare({
-      namespace: 'Templates',
-      noRedeclare: true // Avoid duplicate declarations
-    }))
-    .pipe(concat('templates.js'))
-    .pipe(gulp.dest(path.dest.js))
-    .pipe(notify({ message: 'Handlebars complete', onLast: true }));
-});
-
 gulp.task('lint', function () {
   var jshint = require('gulp-jshint'),
     stylish = require('jshint-stylish');
@@ -157,7 +134,7 @@ gulp.task('mocha', function () {
 /**
  * Compile javascript
  */
-gulp.task('js', ['hbs'], function () {
+gulp.task('js', function () {
   return browserify(path.src.jsRoot).bundle()
     .pipe(source('app.js'))
     .pipe(gulp.dest(path.dest.js))
@@ -181,7 +158,7 @@ gulp.task('sitemap', ['html'], function () {
     .pipe(gulp.dest(path.dest.dir));
 });
 
-gulp.task('manifest', ['hbs', 'css', 'js', 'img', 'html', 'sitemap'], function () {
+gulp.task('manifest', ['css', 'js', 'img', 'html', 'sitemap'], function () {
   return gulp.src([path.dest.dir + '*'])
     .pipe(manifest({
       hash: true,
@@ -198,23 +175,14 @@ gulp.task('manifest', ['hbs', 'css', 'js', 'img', 'html', 'sitemap'], function (
  */
 gulp.task('html', function () {
   var handlebars = require('gulp-static-handlebars');
+  var configPromise = getConfig(['en']);
 
-  var configPromise = getConfig(['en', 'zh']);
-
-  var english = gulp.src(path.src.hbsIndex)
-      .pipe(handlebars(configPromise.get('en'), {
-        partials: gulp.src('./app/hbs/partials/**/*.hbs'),
-        helpers: gulp.src('./app/hbs/helpers/**/*.js')
-      }))
-      .pipe(rename({suffix: '.en', extname: '.html'})),
-    mandarin = gulp.src(path.src.hbsIndex)
-      .pipe(handlebars(configPromise.get('zh'), {
-        partials: gulp.src('./app/hbs/partials/**/*.hbs'),
-        helpers: gulp.src('./app/hbs/helpers/**/*.js')
-      }))
-      .pipe(rename({suffix: '.zh', extname: '.html'}));
-
-  return es.merge(english, mandarin)
+  return gulp.src(path.src.hbsIndex)
+    .pipe(handlebars(configPromise.get('en'), {
+      partials: gulp.src('./app/hbs/partials/**/*.hbs'),
+      helpers: gulp.src('./app/hbs/helpers/**/*.js')
+    }))
+    .pipe(rename({suffix: '.en', extname: '.html'}))
     .pipe(gulp.dest(path.dest.dir))
     .pipe(notify({ message: 'Html complete', onLast: true }));
 });
@@ -257,7 +225,6 @@ gulp.task('clean', function (done) {
 gulp.task('watch', ['build'], function () {
   gulp.watch([path.src.hbs], ['html']);
   gulp.watch([path.src.styl], ['css']);
-  gulp.watch([path.src.hbs], ['hbs']);
   gulp.watch([path.src.js], ['js']);
   gulp.watch([path.src.font], ['font'])
 });
@@ -351,7 +318,7 @@ gulp.task('publish', function() {
 });
 
 gulp.task('test', ['mocha', 'lint', 'complexity']);
-gulp.task('build', ['font', 'hbs', 'css', 'js', 'img', 'html', 'sitemap']);
+gulp.task('build', ['font', 'css', 'js', 'img', 'html', 'sitemap']);
 gulp.task('prod', ['build', 'manifest']);
 gulp.task('serve', ['test', 'build', 'watch', 'server']);
 gulp.task('default', ['test', 'build']);

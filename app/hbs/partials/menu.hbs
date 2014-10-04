@@ -1,8 +1,15 @@
 <a name="menu"></a>
-<h2>{{menuName.label}}</h2>
-<div class="menu-container">
+<div class="cutout"><div class="container"><h2>{{menuName.label}}</h2></div></div>
+
+<div class="container menu-container">
+    <div class="quick-links">
+        {{#each menu}}<a href="#menu-{{@index}}">{{@key}}</a>{{/each}}
+    </div>
+
+
     {{#each menu}}
         <div class="menu-section-container">
+            <a name="menu-{{@index}}"></a>
             <h3>{{@key}}</h3>
             <ul class="menu">
                 {{#each this}}
@@ -35,10 +42,13 @@
 <a name="group-menu"></a>
 <h2>{{groupMenuName.label}}</h2>
 <div class="menu-container">
-
+    <div class="quick-links">
+        {{#each groupMenu}}<a href="#group-menu-{{@index}}">{{@key}}</a>{{/each}}
+    </div>
 
     {{#each groupMenu}}
         <div class="menu-section-container">
+            <a name="group-menu-{{@index}}"></a>
             <h3>{{@key}}</h3>
             <table>
                 {{#each this}}
