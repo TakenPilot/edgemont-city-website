@@ -1,74 +1,75 @@
-<a name="menu"></a>
-<div class="cutout"><div class="container"><h2>{{menuName.label}}</h2></div></div>
+<div class="menu">
+    <a name="menu"></a>
+    <h2>{{menuName.label}}</h2>
 
-<div class="container menu-container">
     <div class="quick-links">
         {{#each menu}}<a href="#menu-{{@index}}">{{@key}}</a>{{/each}}
     </div>
 
+    <div class="container menu-container">
+        {{#each menu}}
+            <div class="menu-section-container">
+                <a name="menu-{{@index}}"></a>
+                <h3>{{@key}}</h3>
+                <ul class="menu-section-list">
+                    {{#each this}}
+                        <li>
+                            {{#if inline-photo}}<div class="image {{inline-photo}}"></div>{{/if}}
+                            <span class="name">{{name}}</span>
+                            <span class="pull-right">
+                                {{#if price-small}}<span class="price small">{{price-small}}</span>{{/if}}
+                                {{#if price-large}}<span class="price large">{{price-large}}</span>{{/if}}
+                                {{#if price-regular}}<span class="price regular">{{price-regular}}</span>{{/if}}
+                            </span>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="photo-list">
+                <ul>
+                    {{#each this}}
+                        {{#if side-photo}}
+                            <li><div class="image {{side-photo}}"></div></li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
 
-    {{#each menu}}
-        <div class="menu-section-container">
-            <a name="menu-{{@index}}"></a>
-            <h3>{{@key}}</h3>
-            <ul class="menu">
-                {{#each this}}
-                    <li>
-                        {{#if inline-photo}}<div class="image {{inline-photo}}"></div>{{/if}}
-                        <span class="name">{{name}}</span>
-                        <span class="pull-right">
-                            {{#if price-small}}<span class="price small">{{price-small}}</span>{{/if}}
-                            {{#if price-large}}<span class="price large">{{price-large}}</span>{{/if}}
-                            {{#if price-regular}}<span class="price regular">{{price-regular}}</span>{{/if}}
-                        </span>
-                    </li>
-                {{/each}}
-            </ul>
-        </div>
-        <div class="photo-list">
-            <ul>
-                {{#each this}}
-                    {{#if side-photo}}
-                        <li><div class="image {{side-photo}}"></div></li>
-                    {{/if}}
-                {{/each}}
-            </ul>
-        </div>
-
-    {{/each}}
-</div>
-
-
-<a name="group-menu"></a>
-<h2>{{groupMenuName.label}}</h2>
-<div class="menu-container">
-    <div class="quick-links">
-        {{#each groupMenu}}<a href="#group-menu-{{@index}}">{{@key}}</a>{{/each}}
+        {{/each}}
     </div>
 
-    {{#each groupMenu}}
-        <div class="menu-section-container">
-            <a name="group-menu-{{@index}}"></a>
-            <h3>{{@key}}</h3>
-            <table>
-                {{#each this}}
-                    <tr><td>
-                        <span class="name">{{0.name}}</span>
-                    </td><td style="width:25%">
-                        <table>
-                        {{#each this}}
-                            <tr><td style="width:50%">
-                                <span class="group-size">{{groupSize}}</span>
-                            </td><td class="price">
-                                <span class="price">{{price}}</span>
-                                <span class="note">{{note}}</span>
-                            </td></tr>
-                        {{/each}}
-                        </table>
-                    </td></tr>
 
-                {{/each}}
-            </table>
+    <a name="group-menu"></a>
+    <h2>{{groupMenuName.label}}</h2>
+    <div class="container menu-container">
+        <div class="quick-links">
+            {{#each groupMenu}}<a href="#group-menu-{{@index}}">{{@key}}</a>{{/each}}
         </div>
-    {{/each}}
+
+        {{#each groupMenu}}
+            <div class="menu-section-container">
+                <a name="group-menu-{{@index}}"></a>
+                <h3>{{@key}}</h3>
+                <table>
+                    {{#each this}}
+                        <tr><td>
+                            <span class="name">{{0.name}}</span>
+                        </td><td style="width:25%">
+                            <table>
+                            {{#each this}}
+                                <tr><td style="width:50%">
+                                    <span class="group-size">{{groupSize}}</span>
+                                </td><td class="price">
+                                    <span class="price">{{price}}</span>
+                                    <span class="note">{{note}}</span>
+                                </td></tr>
+                            {{/each}}
+                            </table>
+                        </td></tr>
+
+                    {{/each}}
+                </table>
+            </div>
+        {{/each}}
+    </div>
 </div>

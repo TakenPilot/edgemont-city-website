@@ -1,0 +1,40 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'visionmedia/nib/master' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.32
+4 verbose readDependencies using package.json deps
+5 verbose cache add [ 'visionmedia/nib/master', null ]
+6 verbose cache add name=undefined spec="visionmedia/nib/master" args=["visionmedia/nib/master",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'visionmedia/nib/master',
+7 verbose parsed url   path: 'visionmedia/nib/master',
+7 verbose parsed url   href: 'visionmedia/nib/master' }
+8 silly lockFile 25130e5b-visionmedia-nib-master visionmedia/nib/master
+9 verbose lock visionmedia/nib/master /Users/danestuckel/.npm/25130e5b-visionmedia-nib-master.lock
+10 silly lockFile 25130e5b-visionmedia-nib-master visionmedia/nib/master
+11 silly lockFile 25130e5b-visionmedia-nib-master visionmedia/nib/master
+12 error addLocal Could not install visionmedia/nib/master
+13 error Error: ENOENT, stat 'visionmedia/nib/master'
+14 error If you need help, you may report this *entire* log,
+14 error including the npm and node versions, at:
+14 error     <http://github.com/npm/npm/issues>
+15 error System Darwin 13.4.0
+16 error command "node" "/usr/local/bin/npm" "install" "visionmedia/nib/master"
+17 error cwd /Users/danestuckel/Projects/retcon/edgemont-city-website
+18 error node -v v0.10.32
+19 error npm -v 1.4.28
+20 error path visionmedia/nib/master
+21 error code ENOENT
+22 error errno 34
+23 verbose exit [ 34, true ]

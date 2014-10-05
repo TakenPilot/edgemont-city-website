@@ -8,58 +8,76 @@ header, .header
   position fixed
   overflow hidden
   z-index 100
+  a
+    text-decoration underline
   @media screen and (max-width tablet-width)
     height mobile-header-height
     h1
+      line-height 1.5rem
       min-width minimum-width
-      font-size 3.0rem
+      font-size 3.4rem
       margin 1rem
-      margin-top 2.5rem
+      margin-bottom 1.8rem
+      margin-top 1.8rem
       padding 0rem
-    .quick-lookup
-      font-size 1rem
-      width 100%
-      padding-top 0.5rem
-      padding-right 1rem
-      padding-left 1rem
-      padding-bottom 0.5rem
-      bottom 0
-      background white
-      span
-        display block
-        margin-top 0.3rem
-      span.divider
-        display none
+    .quick-links
+      position relative
+      float right
+      margin-left 3rem
+      a
+        cursor pointer
+        font-weight: bold;
+        padding-bottom 0rem
+        padding-right 1rem
+        padding-left 1rem
+        display inline-block
+        font-family UpperEastSide, arial, sans-serif
+        font-size 3.0rem
+
+
 
   @media screen and (min-width tablet-width) and (max-width desktop-width)
     height tablet-header-height
     h1
+      line-height 1.5rem
       font-size 4rem
       margin 1rem
+      margin-bottom 1.8rem
       margin-top 2rem
       padding 0rem
-    .quick-lookup
-      box-sizing border-box
-      text-align center
-      width 100%
-      padding 0.5rem
-      top 0
-      right 0
-      background white
+    .quick-links
+      position relative
+      float right
+      margin-left 3rem
+      a
+        cursor pointer
+        font-weight: bold;
+        padding-bottom 0rem
+        padding-right 1rem
+        padding-left 1rem
+        display inline-block
+        font-family UpperEastSide, arial, sans-serif
+        font-size 3.0rem
 
   @media screen and (min-width desktop-width)
     height desktop-header-height
+    line-height 5.0rem
     h1
-      font-size 5.5rem
+      font-size 5.8rem
       margin 1rem
       margin-top 2rem
       padding 0rem
-    .quick-lookup //taken right out
-      position absolute
-      padding-top 0.5rem
-      padding-right 1rem
-      padding-left 1rem
-      padding-bottom 0.5rem
-      top 0
-      right 0
-      background white
+    .quick-links
+      position relative
+      float right
+      top -50px
+      margin-left 3rem
+      a
+        cursor pointer
+        font-weight: bold;
+        padding-bottom 0rem
+        padding-right 1rem
+        padding-left 1rem
+        display inline-block
+        font-family UpperEastSide, arial, sans-serif
+        font-size 3.0rem

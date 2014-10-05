@@ -23,7 +23,8 @@ var util = require('util');
 var awspublish = require('gulp-awspublish');
 var awspublishRouter = require("gulp-awspublish-router");
 var parallelize = require("concurrent-transform");
-var helpers = require('handlebars-helpers/lib/helper-lib').register(require('handlebars'), {});
+
+require('handlebars-helpers/lib/helper-lib').register(require('handlebars'), {});
 
 var siteUrl = 'http://www.edgemontcity.ca';
 var dest = './dist/';
@@ -142,12 +143,37 @@ gulp.task('js', function () {
 });
 
 gulp.task('css', function () {
-  var stylus = require('gulp-stylus'),
+  var through = require("through2"),
+    stylus = require('stylus'),
     nib = require('nib'),
-    notify = require('gulp-notify');
+    notify = require('gulp-notify'),
+    pathLib = require('path');
+
+  var compile = through.obj(function (file, encoding, callback) {
+     var self = this;
+     stylus(file.contents.toString())
+      .set('filename', file.path)
+      .set('paths', [pathLib.dirname(file.path)])
+      .use(nib())
+      .define("imageList", function() {
+         var files = require('fs').readdirSync('./app/img');
+         files = _.map(files, function (file) { return file.split('.').shift(); });
+         return files;
+      }).render(function (err, css) {
+         if (err) {
+           console.log(err);
+           self.emit(err);
+         } else {
+           file.contents = new Buffer(css);
+           self.push(file);
+         }
+         callback();
+       })
+  });
 
   return gulp.src(path.src.stylRoot)
-    .pipe(stylus({use: [nib()]}))
+    .pipe(compile)
+    .pipe(rename({extname: ".css"}))
     .pipe(gulp.dest(path.dest.css))
     .pipe(notify({ message: 'CSS complete' }));
 });

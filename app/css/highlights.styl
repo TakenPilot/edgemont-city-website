@@ -1,26 +1,42 @@
 .highlights
   @media screen and (max-width tablet-width)
-    height mobile-third-height * 2
-
+    margin-top mobile-header-height
   @media screen and (min-width tablet-width) and (max-width desktop-width)
-    height tablet-third-height * 2
-
+    margin-top tablet-header-height
   @media screen and (min-width desktop-width)
-    height desktop-third-height * 2
+    margin-top desktop-header-height
+  a
+    text-decoration underline
+  .quick-lookup
+    padding 1rem
+    line-height 2rem
+    text-align center
+    span
+      display block
 
-  margin-top 12rem
-  .image
-    margin 0
-    padding 0
-    display inline-block
+  .image-panel
+    padding 1rem
     @media screen and (max-width tablet-width)
-      width mobile-third-width
-      height mobile-third-height
+      height mobile-third-height * 2
 
     @media screen and (min-width tablet-width) and (max-width desktop-width)
-      width tablet-third-width
-      height tablet-third-height
+      height tablet-third-height * 2
 
     @media screen and (min-width desktop-width)
-      width desktop-third-width
-      height desktop-third-height
+      height desktop-third-height * 2
+
+    .image
+      margin 0
+      padding 0
+      display inline-block
+      @media screen and (max-width tablet-width)
+        width mobile-third-width
+        height mobile-third-height
+
+      @media screen and (min-width tablet-width) and (max-width desktop-width)
+        width tablet-third-width
+        height tablet-third-height
+
+      @media screen and (min-width desktop-width)
+        width desktop-third-width
+        height desktop-third-height
